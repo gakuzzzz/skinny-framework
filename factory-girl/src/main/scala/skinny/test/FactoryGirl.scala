@@ -18,6 +18,7 @@ import scala.util.Try
 case class FactoryGirl[Id, Entity](mapper: CRUDFeatureWithId[Id, Entity], name: Symbol = null) extends LoggerProvider {
 
   private[this] val c = mapper.column
+  private[this] implicit val asisParameterBinderFactory: ParameterBinderFactory[Any] = ParameterBinderFactory.asisParameterBinderFactory
 
   val autoSession = AutoSession
 

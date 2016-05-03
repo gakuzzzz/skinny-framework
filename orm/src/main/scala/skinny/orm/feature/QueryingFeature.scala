@@ -35,7 +35,7 @@ trait QueryingFeatureWithId[Id, Entity]
         value match {
           case None => Some(sqls.isNull(defaultAlias.field(key.name)))
           case Nil => Some(sqls" FALSE") // for scalikejdbc 2.0.0 - 2.0.6 compatibility
-          case values: Seq[_] => Some(sqls.in(defaultAlias.field(key.name), values))
+          case values: Seq[_] => Some(sqls.in(defaultAlias.field(key.name), values.asInstanceOf[Seq[Any]]))
           case value => Some(sqls.eq(defaultAlias.field(key.name), value))
         }
     }
@@ -108,7 +108,7 @@ trait QueryingFeatureWithId[Id, Entity]
       case (key, value) =>
         value match {
           case Nil => None
-          case values: Seq[_] => Some(sqls.in(defaultAlias.field(key.name), values))
+          case values: Seq[_] => Some(sqls.in(defaultAlias.field(key.name), values.asInstanceOf[Seq[Any]]))
           case value => Some(sqls.eq(defaultAlias.field(key.name), value))
         }
     },

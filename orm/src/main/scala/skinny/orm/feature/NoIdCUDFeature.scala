@@ -87,8 +87,9 @@ trait NoIdCUDFeature[Entity]
   }
 
   def createWithNamedValues(namesAndValues: (SQLSyntax, Any)*)(implicit s: DBSession = autoSession): Any = {
+    val (insertColumns, insertValues) = namesAndValues.unzip
     withSQL {
-      insert.into(this).namedValues(namesAndValues: _*)
+      insert.into(this).columns(insertColumns: _*).values(insertValues: _*)
     }.update.apply()
   }
 
@@ -299,7 +300,7 @@ trait NoIdCUDFeature[Entity]
       val allValues = mergeNamedValues(namedValues)
       beforeHandlers.foreach(_.apply(s, where, allValues))
       val updatedCount = withSQL {
-        mergeAdditionalUpdateSQLs(update(mapper).set(allValues: _*), allValues.isEmpty)
+        mergeAdditionalUpdateSQLs(update(mapper).set(allValues.map { case (k, v) => k -> AsIsParameterBinder(v) }: _*), allValues.isEmpty)
           .where.append(where).and(defaultScopeForUpdateOperations)
       }.update.apply()
       afterHandlers.foreach(_.apply(s, where, allValues, updatedCount))

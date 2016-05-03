@@ -15,6 +15,7 @@ import skinny.orm.feature.CRUDFeatureWithId
 case class LightFactoryGirl[Id, Entity](mapper: CRUDFeatureWithId[Id, Entity], name: Symbol = null) {
 
   private[this] val logger = LoggerFactory.getLogger(classOf[LightFactoryGirl[Id, Entity]])
+  private[this] implicit val asisParameterBinderFactory: ParameterBinderFactory[Any] = ParameterBinderFactory.asisParameterBinderFactory
 
   private[this] val c = mapper.column
 
